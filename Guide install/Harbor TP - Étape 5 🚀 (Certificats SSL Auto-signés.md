@@ -14,8 +14,81 @@ roles/03-certs/
 │   └── main.yml     # Génération sscg + Docker restart
 test-certs.yml       # Playbook test
 ```
+```
+roles\03-certs
 
+---
+- name: Install sscg (cert generator)
+  apt:
+    name: sscg
+    state: present
+    update_cache: yes
 
+- name: Create SSL directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  loop:
+    - /etc/ssl/certs
+    - /etc/ssl/private
+    - /etc/docker/certs.d/harbor.local:443
+
+- name: Generate SSL certificates for harbor.local
+  shell: |
+    sscg \
+      --hostname harbor.local \
+      --lifetime 365 \
+      --cert-file /etc/ssl/certs/harbor.local.crt \
+      --cert-key-file /etc/ssl/private/harbor.local.key
+  args:
+    creates: /etc/ssl/certs/harbor.local.crt
+
+- name: Copy CA cert to Docker registry dir
+  copy:
+    src: /etc/ssl/certs/harbor.local.crt
+    dest: /etc/docker/certs.d/harbor.local:443/ca.crt
+    owner: root
+    group: root
+    mode: '0644'
+    remote_src: yes
+
+- name: Restart Docker to load certificates
+  systemd:
+    name: docker
+    state: restarted
+
+- name: Wait for Docker restart
+  pause:
+    seconds: 10
+
+- name: Verify certificates
+  stat:
+    path: "{{ item }}"
+  loop:
+    - /etc/ssl/certs/harbor.local.crt
+    - /etc/ssl/private/harbor.local.key
+    - /etc/docker/certs.d/harbor.local:443/ca.crt
+  register: cert_files
+
+- name: Display certificate status
+  debug:
+    msg: "SSL certificates generated: {{ item.stat.exists }}"
+  loop: "{{ cert_files.results }}"
+
+```
+```
+---
+- hosts: harbor
+  vars_files:
+    - group_vars/all.yml
+  become: yes
+  roles:
+    - 03-certs
+
+```
 ## 🔧 Contenu Rôle `03-certs`
 
 ```yaml
