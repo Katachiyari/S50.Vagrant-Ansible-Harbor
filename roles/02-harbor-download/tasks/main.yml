@@ -1,0 +1,43 @@
+---
+- name: Create Harbor directories
+  file:
+    path: "{{ harbor_home }}"
+    state: directory
+    owner: vagrant
+    group: vagrant
+    mode: '0755'
+
+- name: Download Harbor offline installer
+  get_url:
+    url: "{{ harbor_url }}"
+    dest: "{{ harbor_home }}/{{ harbor_filename }}"
+    owner: vagrant
+    group: vagrant
+    mode: '0644'
+  register: harbor_download
+
+- name: Extract Harbor
+  unarchive:
+    src: "{{ harbor_home }}/{{ harbor_filename }}"
+    dest: "{{ harbor_home }}"
+    remote_src: yes
+    owner: vagrant
+    group: vagrant
+    creates: "{{ harbor_home }}/harbor"
+  when: harbor_download.changed
+
+- name: Set permissions
+  file:
+    path: "{{ harbor_home }}/harbor"
+    recurse: yes
+    owner: vagrant
+    group: vagrant
+    mode: '0755'
+
+- name: Display Harbor files
+  shell: ls -la {{ harbor_home }}/harbor
+  register: harbor_files
+
+- name: Show Harbor version
+  debug:
+    msg: "Harbor {{ harbor_version }} downloaded to {{ harbor_home }}"

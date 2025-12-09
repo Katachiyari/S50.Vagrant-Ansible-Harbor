@@ -1,0 +1,5 @@
+---
+- hosts: harbor
+  become: yes
+  roles:
+    - 01-docker

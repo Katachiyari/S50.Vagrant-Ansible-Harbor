@@ -1,0 +1,10 @@
+---
+- hosts: harbor
+  become: yes
+  vars_files:
+    - group_vars/all.yml
+  roles:
+    - 01-docker
+    - 02-harbor-download
+    - 03-certs
+    - 04-harbor-install

@@ -1,0 +1,7 @@
+---
+harbor_version: "2.11.1"
+harbor_filename: "harbor-offline-installer-v{{ harbor_version }}.tgz"
+harbor_url: "https://github.com/goharbor/harbor/releases/download/v{{ harbor_version }}/{{ harbor_filename }}"
+harbor_home: "/home/vagrant/harbor"
+harbor_hostname: "harbor.local"
+harbor_admin_password: "Harbor123!"

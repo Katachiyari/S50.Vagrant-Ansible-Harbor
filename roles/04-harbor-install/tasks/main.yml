@@ -1,0 +1,21 @@
+---
+- name: Generate harbor.yml
+  template:
+    src: harbor.yml.j2
+    dest: "{{ harbor_home }}/harbor/harbor.yml"
+    owner: vagrant
+    group: vagrant
+  register: config
+
+- name: Install Harbor
+  shell: ./install.sh --with-trivy
+  args:
+    chdir: "{{ harbor_home }}/harbor"
+  become: yes
+  when: config.changed
+
+- name: Start services
+  shell: docker compose up -d
+  args:
+    chdir: "{{ harbor_home }}/harbor"
+  become: no

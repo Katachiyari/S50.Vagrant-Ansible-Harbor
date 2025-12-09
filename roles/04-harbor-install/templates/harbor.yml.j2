@@ -1,0 +1,26 @@
+hostname: {{ harbor_hostname }}
+http:
+  port: 80
+https:
+  port: 443
+  certificate: /etc/ssl/certs/harbor.local.crt
+  private_key: /etc/ssl/private/harbor.local.key
+harbor_admin_password: {{ harbor_admin_password }}
+database:
+  password: root123
+redis:
+  port: 6379
+data_volume: /data
+jobservice:
+  max_job_workers: 10
+  job_loggers:
+    - STD_OUTPUT
+    - FILE
+  job_logger_file:
+    level: info
+  logger_sweeper_duration: 1
+notification:
+  webhook_job_max_retry: 3
+trivy:
+  ignore_unfixed: false
+  skip_update: false
