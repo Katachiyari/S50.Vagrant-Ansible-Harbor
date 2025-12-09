@@ -1,5 +1,3 @@
-<img src="https://r2cdn.perplexity.ai/pplx-full-logo-primary-dark%402x.png" style="height:64px;margin-right:32px"/>
-
 ## 🛑 **ÉTEINDRE HARBOR - 3 Méthodes**
 
 ### **1. HARBOR UNIQUEMENT** (Recommandé)

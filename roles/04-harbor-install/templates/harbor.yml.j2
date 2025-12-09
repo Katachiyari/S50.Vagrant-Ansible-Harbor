@@ -18,9 +18,12 @@ jobservice:
     - FILE
   job_logger_file:
     level: info
-  logger_sweeper_duration: 1
+  logger_sweeper_duration: 1h
 notification:
   webhook_job_max_retry: 3
+  webhook_job_http_client_timeout: 120s
 trivy:
   ignore_unfixed: false
   skip_update: false
+chart:
+  absolute_url: enabled
